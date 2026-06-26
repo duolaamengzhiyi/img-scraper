@@ -1,0 +1,29 @@
+appId: com.pixivarchiver.app
+productName: Pixiv Collection Archiver
+directories:
+  output: dist
+  buildResources: build
+files:
+  - out/**/*
+  - package.json
+# 原生模块 / 二进制需从 asar 解包，运行时按 app.asar.unpacked 解析路径
+asarUnpack:
+  - node_modules/ffmpeg-static/**
+  - node_modules/better-sqlite3/**
+  - resources/**
+# 由 postinstall 的 scripts/rebuild-native.js（buildFromSource，匹配 Electron ABI）负责重建原生模块；
+# 关闭 electron-builder 自带的 rebuild，避免它抓到错误 ABI 的预编译包覆盖正确二进制。
+npmRebuild: false
+mac:
+  category: public.app-category.utilities
+  target:
+    - dmg
+  artifactName: ${productName}-${version}-${arch}.${ext}
+win:
+  target:
+    - nsis
+  artifactName: ${productName}-${version}-setup.${ext}
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true

@@ -1,0 +1,51 @@
+name: Build desktop apps
+
+# 手动触发（Actions 页点 Run workflow）或推送 v* 标签时构建。
+# 每个平台在各自的原生 runner 上编译 better-sqlite3（按该平台的 Electron ABI）
+# 并安装对应平台的 ffmpeg 二进制，因此产物可直接在目标系统运行。
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14 # Apple Silicon (arm64) → dmg
+            script: dist:mac
+          - os: windows-latest # x64 → nsis 安装包(.exe)
+            script: dist:win
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # postinstall 会按本 runner 的 Electron ABI 从源码重建 better-sqlite3，
+      # 并下载本平台的 ffmpeg 二进制。
+      - run: pnpm install
+
+      - name: Package
+        run: pnpm ${{ matrix.script }}
+        env:
+          # 无签名证书：跳过自动签名（产物为未签名，首次打开需绕过 Gatekeeper / SmartScreen）
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-installer
+          path: |
+            dist/*.dmg
+            dist/*.exe
+          if-no-files-found: ignore

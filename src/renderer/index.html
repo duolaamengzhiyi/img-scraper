@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data: blob: pixiv-img:; media-src 'self' data: blob: pixiv-img:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ws: wss:; font-src 'self' data:"
+    />
+    <title>Pixiv Collection Archiver</title>
+    <!-- 首帧前同步应用主题，避免开屏闪白；经典脚本会阻塞解析、先于 CSS 绘制执行 -->
+    <script src="./theme-init.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
