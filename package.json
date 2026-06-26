@@ -2,6 +2,7 @@
   "name": "pixiv-collection-archiver",
   "version": "0.1.0",
   "description": "Desktop app to archive your own Pixiv bookmarks, organized by your bookmark tags.",
+  "author": "Nolan Jin",
   "private": true,
   "main": "./out/main/index.js",
   "scripts": {
@@ -13,8 +14,8 @@
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
     "rebuild": "node scripts/rebuild-native.js",
     "postinstall": "node node_modules/electron/install.js && node scripts/rebuild-native.js",
-    "dist:mac": "electron-vite build && electron-builder --mac",
-    "dist:win": "electron-vite build && electron-builder --win"
+    "dist:mac": "electron-vite build && electron-builder --mac --publish never",
+    "dist:win": "electron-vite build && electron-builder --win --publish never"
   },
   "dependencies": {
     "@tanstack/react-virtual": "^3.14.3",
